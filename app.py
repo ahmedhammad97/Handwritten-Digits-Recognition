@@ -46,3 +46,17 @@ trainX = vectors[splitRatio:]
 trainY = labels[splitRatio:]
 testX = vectors[:splitRatio]
 testY = labels[:splitRatio]
+
+
+#######################
+### Build the model ###
+#######################
+
+# Set needed containers
+Ks = [5,10,15]
+centers = []
+maps = []
+predictions = []
+trainResults = [0.] * len(Ks)
+testResults = [0.] * len(Ks)
+print(trainResults, testResults)
