@@ -1,9 +1,7 @@
 import os, numpy, random, struct
-
-##############################
-### Coded by: Ahmed Hammad ###
-###    ahmedhammad.co.nf   ###
-##############################
+from helper import verify
+from matplotlib import pyplot
+from PIL import Image
 
 # Load Header
 trainingInput = open(os.path.relpath("datasets/train-images-idx3-ubyte"), 'rb')
@@ -53,10 +51,50 @@ testY = labels[:splitRatio]
 #######################
 
 # Set needed containers
-Ks = [5,10,15]
+Ks = [20]
 centers = []
 maps = []
 predictions = []
 trainResults = [0.] * len(Ks)
 testResults = [0.] * len(Ks)
-print(trainResults, testResults)
+
+# Call model
+from sklearn.cluster import KMeans
+from sklearn.metrics import accuracy_score
+
+
+###DISCLAIMER: Copied code###
+def cluster(k):
+    kmeans = KMeans(n_clusters = k, init='random', n_init = 5).fit(trainX)
+    trainMapping , trainPredictions = verify(trainY, kmeans.labels_)
+    trainResults[Ks.index(k)] = accuracy_score(trainY, trainPredictions)
+    testLabels = kmeans.predict(testX)
+    testPredictions = [trainMapping[label] for label in test_labels]
+    testResults[Ks.index(k)] = accuracy_score(testY, testPredictions)
+    centers.append(kmeans.cluster_centers_)
+    maps.append(train_mapping)
+    predictions.append(trainPredictions)
+
+###DISCLAIMER: Copied code###
+def doTheJob(k):
+    trainResult = trainResults[Ks.index(k)]
+    testResult = testResults[Ks.index(k)]
+    clusterCenters = centers[Ks.index(k)]
+    mapping = maps[Ks.index(k)]
+    Dpredictions = predictions[Ks.index(k)]
+    for k_ in numpy.arange(k):
+        clusterCenter = clusterCenters[k_]
+        meanImage = numpy.reshape(cluster_center, (rows, columns))
+        pyplot.imshow(meanImage, interpolation='none')
+        pyplot.show()
+        sampleVectors= trainX[Dpredictions==mapping[k_], :]
+        sampleVector = sampleVectors[numpy.random.randint(sampleVectors.shape[0], size=1), :]
+        sampleImage = numpy.reshape(sampleVector, (rows, columns))
+        pyplot.imshow(sampleImage)
+        pyplot.show()
+
+for k in Ks:
+    cluster(k)
+
+for k in Ks:
+    doTheJob(k)
